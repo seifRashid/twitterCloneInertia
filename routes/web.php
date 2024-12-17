@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\IdeasController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -27,5 +28,18 @@ Route::middleware('auth')->group(function () {
 
 //Tweeter app routes
 Route::get('/home',[DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('home');
+
+//Idea posts routes
+Route::resource('tweet', IdeasController::class)
+    ->only(['store'])
+    ->middleware(['auth', 'verified']);
+
+//route view for terms page
+Route::get('/terms', function () {
+    return Inertia::render('Chat/VTerms');
+    })->name('terms');
+
+
+
 
 require __DIR__.'/auth.php';

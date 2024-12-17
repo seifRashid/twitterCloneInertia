@@ -1,9 +1,13 @@
 <script setup>
+import PostForm from "@/Components/ChatComponents/PostForm.vue";
+import RightSide from "@/Components/ChatComponents/RightSide.vue";
+import SideLinks from "@/Components/ChatComponents/SideLinks.vue";
+import VPost from "@/Components/ChatComponents/VPost.vue";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head, Link } from "@inertiajs/vue3";
 
 defineProps({
-    jina: Array,
+    posts: Array,
 });
 </script>
 
@@ -14,32 +18,26 @@ defineProps({
         <div class="w-[80%] mx-auto">
             <div class="flex gap-2 items-start justify-center w-full pt-4">
                 <!--  Side Links  -->
-                <div
-                    class="w-1/4 flex flex-col gap-4 p-4 text-slate-500 font-semibold items-start border border-slate-400"
-                >
-                    <div class="">
-                        <Link :href="route('dashboard')">
-                            Home
-                        </Link>
-                    </div>
-                    <div class="">
-                        <Link :href="route('home')">
-                            Explore
-                        </Link>
-                    </div>
-                    <div class="">
-                        <Link :href="route('home')">
-                            Feed
-                        </Link>
-                    </div>
-                    <div class="">
-                        <Link :href="route('home')">
-                            Terms
-                        </Link>
+                <SideLinks />
+                <div class="w-2/4">
+                    <div class="flex flex-col gap-4">
+                        <!-- Post form -->
+                        <PostForm />
+                        <!-- TimeLine-->
+                        <div class="flex flex-col gap-4 pb-3">
+                            <!-- Posts  -->
+                             <div v-for="post in posts" :key="post.id">
+                                <VPost :post="post" />
+                             </div>
+                        </div>
                     </div>
                 </div>
-                <div class="w-2/4"></div>
-                <div class="w-1/4"></div>
+                <div class="w-1/4">
+                    <div class="flex flex-col gap-4">
+                        <RightSide/>
+                    </div>
+
+                </div>
             </div>
         </div>
     </AuthenticatedLayout>

@@ -2,34 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\Ideas;
 use Inertia\Inertia;
 
 class DashboardController extends Controller
 {
     //
-    public function index() {
+    public function index()
+    {
 
-        $majina = [
-            [
-                'id' => 1,
-                'name' => 'Rashid Seif',
-                'age' => 30,
-                'role'=> 'manager'
-            ],
-            [
-                'id' => 2,
-                'name' => 'John Doe',
-                'age' => 25,
-                'role'=> 'assistant manager'
-            ],
-            [
-                'id' => 1,
-                'name' => 'Hero Suba',
-                'age' => 50,
-                'role'=> 'former manager'
-            ],
-          ];
-        return Inertia::render('Chat/VHome', ['jina'=>$majina]);
+        // $posts = new Ideas(
+        //     [
+        //         // 'id' => 1,
+        //         // 'userName' => 'Rashid Seif',
+        //         'content' => 'Hello there everyone, I am greeting you from my home here in Mikindani🏠',
+        //         'likes' => 30,
+        //     ]
+        // );
+        // $posts->save();
+        return Inertia::render('Chat/VHome', ['posts' => Ideas::orderBy('created_at', 'DESC')->get()]);
     }
 }
