@@ -2,13 +2,29 @@
 import PostForm from "@/Components/ChatComponents/PostForm.vue";
 import RightSide from "@/Components/ChatComponents/RightSide.vue";
 import SideLinks from "@/Components/ChatComponents/SideLinks.vue";
+import VPagination from "@/Components/ChatComponents/VPagination.vue";
 import VPost from "@/Components/ChatComponents/VPost.vue";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head, Link } from "@inertiajs/vue3";
 
+
+// const { props } = usePage();
+// const flash = props.flash;
+
 defineProps({
-    posts: Array,
+    posts: Object,
+    flash: Object,
+    // form errors
+    errors: Object,
 });
+
+// if(this.flash.success === true){
+//     setTimeout(() => {
+//         this.flash.success = false;
+//     }, 3000);
+// }
+
+
 </script>
 
 <template>
@@ -21,15 +37,22 @@ defineProps({
                 <SideLinks />
                 <div class="w-2/4">
                     <div class="flex flex-col gap-4">
+                        <div v-show="flash.success" class="flex justify-between bg-green-400 text-green-900 text-lg border border-green-600 p-3 w-full rounded-md">
+                            <div class="font-bold">
+                                {{ flash.success }}
+                            </div>
+                            <p class="ml-5 cursor-pointer font-bold" @click="flash.success = false" >X</p>
+                        </div>
                         <!-- Post form -->
-                        <PostForm />
+                        <PostForm :errors="errors"/>
                         <!-- TimeLine-->
                         <div class="flex flex-col gap-4 pb-3">
                             <!-- Posts  -->
-                             <div v-for="post in posts" :key="post.id">
+                             <div v-for="post in posts.data" :key="post.id">
                                 <VPost :post="post" />
                              </div>
-                        </div>
+                            </div>
+                            <VPagination :links="posts.links" />
                     </div>
                 </div>
                 <div class="w-1/4">

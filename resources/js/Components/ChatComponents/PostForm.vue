@@ -10,6 +10,16 @@ function submit() {
     router.post("/tweet", form);
     form.reset();
 }
+
+//define prop named error
+const err = defineProps({
+    errors: Object,
+});
+
+// if(this.err.errors.content){
+//     this.form.content = null
+// }
+
 </script>
 <template>
     <div class="flex flex-col bg-white p-4 rounded-lg shadow-md w-full">
@@ -23,8 +33,10 @@ function submit() {
                     v-model="form.content"
                     placeholder="Your ideas matter,😁"
                     class="p -2 border border-gray-300 rounded-md w-full"
-
                 />
+            </div>
+            <div v-if="err.errors.content">
+                <p class="text-xs text-red-500 font-semibold">{{ err.errors.content }}</p>
             </div>
             <button
                 type="submit"

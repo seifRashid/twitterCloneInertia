@@ -32,6 +32,7 @@ Route::get('/home',[DashboardController::class, 'index'])->middleware(['auth', '
 //Idea posts routes
 Route::resource('tweet', IdeasController::class)
     ->only(['store'])
+    ->names(['store'=>'tweet.store'])
     ->middleware(['auth', 'verified']);
 
 //route view for terms page

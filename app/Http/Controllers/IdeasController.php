@@ -34,6 +34,8 @@ class IdeasController extends Controller
         ]);
 
         Ideas::create($validated);
+        // dd('Hello from controller');
+        return redirect()->route('home')->with('success', 'Post created successfully🚀');
 
     }
 

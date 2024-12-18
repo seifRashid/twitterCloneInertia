@@ -20,6 +20,7 @@ class DashboardController extends Controller
         //     ]
         // );
         // $posts->save();
-        return Inertia::render('Chat/VHome', ['posts' => Ideas::orderBy('created_at', 'DESC')->get()]);
+        return Inertia::render('Chat/VHome', ['posts' => Ideas::orderBy('created_at', 'DESC')
+                ->paginate(5)]);
     }
 }

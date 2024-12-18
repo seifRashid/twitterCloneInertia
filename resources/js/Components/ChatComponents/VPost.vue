@@ -1,14 +1,16 @@
 <script setup>
 import { reactive, ref } from "vue";
 import { router } from "@inertiajs/vue3";
-import dayjs from 'dayjs';
-import relativeTime from 'dayjs/plugin/relativeTime';
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
 
 dayjs.extend(relativeTime);
 
 defineProps({
     post: Array,
 });
+
+const showSetting = ref(false)
 
 const form = reactive({
     idea: null,
@@ -31,7 +33,37 @@ const commentShow = ref(false);
                 ></div>
                 <div class="font-bold text-slate-800">{{ post.id }}</div>
             </div>
-            <div class="text-sm text-slate-800">{{ dayjs(post.created_at).fromNow()  }}</div>
+            <div class="flex justify-between gap-3 items-center">
+                <div class="text-sm text-slate-800">
+                    {{ dayjs(post.created_at).fromNow() }}
+                </div>
+                <!-- Post settings -->
+                <div class="flex flex-col relative">
+                    <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    class="size-5 cursor-pointer"
+                    @click="showSetting = !showSetting"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75"
+                    />
+                </svg>
+                <transition name="fade-slide" >
+                    <div v-show="showSetting" class="absolute top-5 right-2 border border-slate-600 bg-white rounded-md py-1 text-sm">
+                        <div class="flex flex-col gap-1">
+                            <div class="text-sm text-red-800 font-semibold cursor-pointer hover:bg-slate-300 px-3 w-full">Delete</div>
+                            <div class="text-sm text-green-800 font-semibold cursor-pointer hover:bg-slate-300 px-3 w-full">Edit</div>
+                        </div>
+                    </div>
+                </transition>
+                </div>
+            </div>
         </div>
         <!-- Content -->
         <p class="text-sm text-slate-800">
