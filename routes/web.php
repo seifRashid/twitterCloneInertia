@@ -27,20 +27,19 @@ Route::middleware('auth')->group(function () {
 });
 
 //Tweeter app routes
-Route::get('/home',[DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('home');
+Route::get('/home', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('home');
 
 //Idea posts routes
 Route::resource('tweet', IdeasController::class)
-    ->only(['store'])
-    ->names(['store'=>'tweet.store'])
+    ->only(['store', 'destroy', 'show', 'edit'])
+    ->names(['store' => 'tweet.store', 'destroy' => 'tweet.destroy', 'show' => 'tweet.show', 'edit' => 'tweet.edit'])
     ->middleware(['auth', 'verified']);
+
+// Route::delete('/tweet/{id}', [IdeasController::class, 'destroy'])->name('tweet.destroy');
 
 //route view for terms page
 Route::get('/terms', function () {
     return Inertia::render('Chat/VTerms');
-    })->name('terms');
+})->name('terms');
 
-
-
-
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

@@ -7,7 +7,7 @@ defineProps({
 </script>
 <template>
     <div class="flex gap-4 justify-center px-2 py-1 border border-gray-500 rounded-md mb-2">
-        <div v-for="(link, index) in links" :key="index" class="">
+        <div v-for="(link, index) in links" :key="index">
             <div v-if="link.url === null" v-html="link.label" class="text-gray-400" ></div>
             <Link
                 v-else

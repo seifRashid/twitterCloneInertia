@@ -1,24 +1,50 @@
 <script setup>
 import { reactive, ref } from "vue";
-import { router } from "@inertiajs/vue3";
+import { Link, router } from "@inertiajs/vue3";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import DropdownLink from "../DropdownLink.vue";
+
+const form = reactive({
+    content: null,
+});
+
+function submit() {
+    router.post("/tweet", form);
+    form.reset();
+}
+
+//define prop named error
+// const err = defineProps({
+// });
 
 dayjs.extend(relativeTime);
 
 defineProps({
-    post: Array,
+    post: [Array, Object],
+    showEditing: Boolean,
+    errors: Object,
 });
 
-const showSetting = ref(false)
+// console.log("hello")
 
-const form = reactive({
-    idea: null,
-});
+const edit = ref(false);
+// const pathname = window.location.pathname.split('/')
+// pathname = pathname[pathname.length-1]
 
-function submit() {
-    router.post("/comment", form);
-}
+// if(pathname === 'edit'){
+//     edit.value = true
+// }
+
+const showSetting = ref(false);
+
+// const form = reactive({
+//     idea: null,
+// });
+
+// function submit() {
+//     router.post("/comment", form);
+// }
 
 const commentShow = ref(false);
 </script>
@@ -40,35 +66,96 @@ const commentShow = ref(false);
                 <!-- Post settings -->
                 <div class="flex flex-col relative">
                     <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.5"
-                    stroke="currentColor"
-                    class="size-5 cursor-pointer"
-                    @click="showSetting = !showSetting"
-                >
-                    <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75"
-                    />
-                </svg>
-                <transition name="fade-slide" >
-                    <div v-show="showSetting" class="absolute top-5 right-2 border border-slate-600 bg-white rounded-md py-1 text-sm">
-                        <div class="flex flex-col gap-1">
-                            <div class="text-sm text-red-800 font-semibold cursor-pointer hover:bg-slate-300 px-3 w-full">Delete</div>
-                            <div class="text-sm text-green-800 font-semibold cursor-pointer hover:bg-slate-300 px-3 w-full">Edit</div>
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                        class="size-5 cursor-pointer"
+                        @click="showSetting = !showSetting"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75"
+                        />
+                    </svg>
+                    <transition name="fade-slide">
+                        <div
+                            v-show="showSetting"
+                            class="absolute top-5 right-2 border border-slate-600 bg-white rounded-md py-1 text-sm"
+                        >
+                            <div class="flex flex-col gap-1">
+                                <div>
+                                    <DropdownLink
+                                        class="text-red-800 text-start"
+                                        as="button"
+                                        :href="route('tweet.destroy', post.id)"
+                                        method="delete"
+                                    >
+                                        Delete
+                                    </DropdownLink>
+                                    <!-- <button @click="deleteTweet(post.id)">Delete</button> -->
+                                </div>
+                                <div>
+                                    <DropdownLink
+                                        class="text-green-800 text-start"
+                                        as="button"
+                                        :href="route('tweet.edit', post.id)"
+                                        method=""
+                                    >
+                                        Edit
+                                    </DropdownLink>
+                                </div>
+                                <div>
+                                    <DropdownLink
+                                        class="text-blue-800 text-start"
+                                        as="button"
+                                        :href="route('tweet.show', post.id)"
+                                        method="get"
+                                    >
+                                        Show
+                                    </DropdownLink>
+                                </div>
+                                <!-- :href="route('tweet.destroy', ideas.id)" -->
+                            </div>
                         </div>
-                    </div>
-                </transition>
+                    </transition>
                 </div>
             </div>
         </div>
-        <!-- Content -->
-        <p class="text-sm text-slate-800">
+        <!-- Content for the post is shown below -->
+        <!-- Content shown if showEditting is false else the textarea will be shown -->
+        <div v-if="showEditing" class="w-full">
+            <div>
+                <form @submit.prevent="submit" >
+                    <div class="flex flex-col gap-2">
+                        <textarea
+                            type="text"
+                            v-model="form.content"
+                            placeholder="Your ideas matter,😁"
+                            class="p -2 border border-gray-300 rounded-md w-full"
+                        />
+                    </div>
+                    <!-- <div v-if="errors.content">
+                        <p class="text-xs text-red-500 font-semibold">
+                            {{ errors.content }}
+                        </p>
+                    </div> -->
+                    <button
+                        type="submit"
+                        class="bg-slate-600 hover:bg-slate-500 text-white font-bold py-1 my-2 px-4 rounded"
+                    >
+                        Update
+                    </button>
+                </form>
+            </div>
+            <p>Edit now</p>
+        </div>
+        <p v-else class="text-sm text-slate-800">
             {{ post.content }}
         </p>
+        <div class="" v-show="showEditing">Hello you can edit now</div>
         <!-- Reactions Icons -->
         <div class="flex gap-2 items-center justify-between w-full my-2">
             <!-- Like icon -->
