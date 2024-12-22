@@ -1,8 +1,8 @@
 <script setup>
-import { reactive } from "vue";
-import { router } from "@inertiajs/vue3";
+// import { reactive } from "vue";
+import { router, useForm } from "@inertiajs/vue3";
 
-const form = reactive({
+const form = useForm({
     content: null,
 });
 

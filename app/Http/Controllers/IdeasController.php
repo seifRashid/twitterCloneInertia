@@ -65,9 +65,16 @@ class IdeasController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Ideas $ideas)
+    public function update(Request $request,$ideas)
     {
         //
+        $validated = $request->validate([
+            'content' => 'required|string|max:255|min:3',
+            ]);
+            // dd($validated);
+            $ideas = Ideas::where('id', $ideas)->firstOrFail();
+            $ideas->update($validated);
+            return redirect()->route('tweet.show', $ideas->id)->with('success', 'Post updated successfully🚀');
     }
 
     /**

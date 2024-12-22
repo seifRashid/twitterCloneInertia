@@ -1,16 +1,16 @@
 <script setup>
 import { reactive, ref } from "vue";
-import { Link, router } from "@inertiajs/vue3";
+import { Link, router, useForm } from "@inertiajs/vue3";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import DropdownLink from "../DropdownLink.vue";
 
-const form = reactive({
+const form = useForm({
     content: null,
 });
 
 function submit() {
-    router.post("/tweet", form);
+    router.put("/tweet", form);
     form.reset();
 }
 
@@ -95,7 +95,6 @@ const commentShow = ref(false);
                                     >
                                         Delete
                                     </DropdownLink>
-                                    <!-- <button @click="deleteTweet(post.id)">Delete</button> -->
                                 </div>
                                 <div>
                                     <DropdownLink
@@ -128,14 +127,15 @@ const commentShow = ref(false);
         <!-- Content shown if showEditting is false else the textarea will be shown -->
         <div v-if="showEditing" class="w-full">
             <div>
-                <form @submit.prevent="submit" >
+                <form @submit.prevent="form.put(route('tweet.update', post.id), { onSuccess: () => showEditing = false })" >
                     <div class="flex flex-col gap-2">
                         <textarea
                             type="text"
                             v-model="form.content"
                             placeholder="Your ideas matter,😁"
-                            class="p -2 border border-gray-300 rounded-md w-full"
-                        />
+                            class="p-2 border border-gray-300 rounded-md w-full"
+                        >{{ post.content }}</textarea>
+
                     </div>
                     <!-- <div v-if="errors.content">
                         <p class="text-xs text-red-500 font-semibold">

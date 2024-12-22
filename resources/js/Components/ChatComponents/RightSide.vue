@@ -1,10 +1,17 @@
-<script setup></script>
+<script setup>
+import { useForm } from '@inertiajs/vue3';
+
+const form = useForm({
+    search:''
+})
+</script>
 <template>
     <div class="flex flex-col border border-slate-400 rounded-md p-4">
-        <form @submit.prevent="submit">
-            <h1 class="font-semibold" >Search</h1>
+        <h1 class="font-semibold" >Search</h1>
+        <form @submit.prevent="form.get(route('home'))">
             <input
                 type="text"
+                v-model="form.search"
                 placeholder="Search user..."
                 class="border border-gray-300 rounded-md w-full"
             />

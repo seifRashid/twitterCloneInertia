@@ -10,17 +10,12 @@ class DashboardController extends Controller
     //
     public function index()
     {
+        $ideas = Ideas::orderBy('created_at', 'DESC');
+        if (request()->has('search')) {
+            $ideas = Ideas::where( 'content', 'like', '%' . request()->get('search','') . '%');
+        }
 
-        // $posts = new Ideas(
-        //     [
-        //         // 'id' => 1,
-        //         // 'userName' => 'Rashid Seif',
-        //         'content' => 'Hello there everyone, I am greeting you from my home here in Mikindani🏠',
-        //         'likes' => 30,
-        //     ]
-        // );
-        // $posts->save();
-        return Inertia::render('Chat/VHome', ['posts' => Ideas::orderBy('created_at', 'DESC')
+        return Inertia::render('Chat/VHome', ['posts' => $ideas
                 ->paginate(5)]);
     }
 }

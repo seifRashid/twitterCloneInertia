@@ -31,8 +31,8 @@ Route::get('/home', [DashboardController::class, 'index'])->middleware(['auth', 
 
 //Idea posts routes
 Route::resource('tweet', IdeasController::class)
-    ->only(['store', 'destroy', 'show', 'edit'])
-    ->names(['store' => 'tweet.store', 'destroy' => 'tweet.destroy', 'show' => 'tweet.show', 'edit' => 'tweet.edit'])
+    ->only(['store', 'destroy', 'show', 'edit','update'])
+    ->names(['store' => 'tweet.store', 'destroy' => 'tweet.destroy', 'show' => 'tweet.show', 'edit' => 'tweet.edit', 'update'=>'tweet.update'])
     ->middleware(['auth', 'verified']);
 
 // Route::delete('/tweet/{id}', [IdeasController::class, 'destroy'])->name('tweet.destroy');
