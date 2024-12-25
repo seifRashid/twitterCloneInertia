@@ -6,7 +6,7 @@ import { Link } from '@inertiajs/vue3';
         class="w-1/4 flex flex-col gap-4 p-4 items-start border border-slate-400 rounded-md"
     >
         <div class="hover:text-slate-600">
-            <Link :href="route('dashboard')"> Home </Link>
+            <Link :href="route('home')"> Home </Link>
         </div>
         <div class="hover:text-slate-600">
             <Link :href="route('home')"> Explore </Link>

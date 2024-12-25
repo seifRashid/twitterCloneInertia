@@ -4,48 +4,26 @@ import { Link, router, useForm } from "@inertiajs/vue3";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import DropdownLink from "../DropdownLink.vue";
-
-const form = useForm({
-    content: null,
-});
-
-function submit() {
-    router.put("/tweet", form);
-    form.reset();
-}
-
-//define prop named error
-// const err = defineProps({
-// });
+import CommentContent from "./CommentContent.vue";
 
 dayjs.extend(relativeTime);
 
-defineProps({
+const props = defineProps({
     post: [Array, Object],
     showEditing: Boolean,
     errors: Object,
+    comments: Object,
 });
 
-// console.log("hello")
+const form = useForm({
+    ideas_id: props.post.id,
+    content: null,
+    comment: null,
+});
 
 const edit = ref(false);
-// const pathname = window.location.pathname.split('/')
-// pathname = pathname[pathname.length-1]
-
-// if(pathname === 'edit'){
-//     edit.value = true
-// }
 
 const showSetting = ref(false);
-
-// const form = reactive({
-//     idea: null,
-// });
-
-// function submit() {
-//     router.post("/comment", form);
-// }
-
 const commentShow = ref(false);
 </script>
 <template>
@@ -127,15 +105,21 @@ const commentShow = ref(false);
         <!-- Content shown if showEditting is false else the textarea will be shown -->
         <div v-if="showEditing" class="w-full">
             <div>
-                <form @submit.prevent="form.put(route('tweet.update', post.id), { onSuccess: () => showEditing = false })" >
+                <form
+                    @submit.prevent="
+                        form.put(route('tweet.update', props.post.id), {
+                            onSuccess: () => (showEditing = false),
+                        })
+                    "
+                >
                     <div class="flex flex-col gap-2">
                         <textarea
                             type="text"
                             v-model="form.content"
                             placeholder="Your ideas matter,😁"
                             class="p-2 border border-gray-300 rounded-md w-full"
-                        >{{ post.content }}</textarea>
-
+                            >{{ props.post.content }}</textarea
+                        >
                     </div>
                     <!-- <div v-if="errors.content">
                         <p class="text-xs text-red-500 font-semibold">
@@ -153,7 +137,7 @@ const commentShow = ref(false);
             <p>Edit now</p>
         </div>
         <p v-else class="text-sm text-slate-800">
-            {{ post.content }}
+            {{ props.post.content }}
         </p>
         <div class="" v-show="showEditing">Hello you can edit now</div>
         <!-- Reactions Icons -->
@@ -177,7 +161,9 @@ const commentShow = ref(false);
                         d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z"
                     />
                 </svg>
-                <span class="text-slate-500 text-xs">{{ post.likes }}</span>
+                <span class="text-slate-500 text-xs">{{
+                    props.post.likes
+                }}</span>
             </div>
             <!-- Comment icon -->
             <div
@@ -255,11 +241,16 @@ const commentShow = ref(false);
         <transition name="fade-slide" mode="out-in" appear>
             <div class="w-full" v-show="commentShow">
                 <!-- Comment section -->
-                <form @submit.prevent="submit">
+                <!-- <CommentSection/> -->
+                <form
+                    @submit.prevent="
+                        form.post(route('tweet.comment.store')), form.reset()
+                    "
+                >
                     <div class="flex flex-col gap-2">
                         <textarea
                             type="text"
-                            v-model="form.idea"
+                            v-model="form.comment"
                             placeholder="Comment..."
                             class="p -2 border border-gray-300 rounded-md w-full"
                         />
@@ -272,20 +263,20 @@ const commentShow = ref(false);
                     </button>
                 </form>
                 <div class="w-full flex flex-col gap-2 p-4">
-                    <div class="flex justify-start items-center gap-2">
-                        <div
-                            class="size-[35px] rounded-full bg-green-400 text-2xl items-center"
-                        ></div>
-                        <div class="font-bold text-slate-800">
-                            Mimi Mwenyewe
-                        </div>
+                    <div
+                        v-if="props.comments.length === 0"
+                        class="text-center text-gray-500 font-bold py-1 my-2 px-4 rounded"
+                    >
+                        No comments yet
                     </div>
-                    <p class="text-sm text-slate-800">
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                        Animi quos quod assumenda dolorem soluta. Odio, enim
-                        sapiente! Nesciunt quis porro aperiam vitae nulla quas,
-                        omnis dolor, dolore itaque quam molestiae?
-                    </p>
+                    <div
+                        v-else
+                        v-for="comment in props.comments"
+                        :key="comment.id"
+                        class="flex flex-col gap-2 p-4 rounded-md"
+                    >
+                        <CommentContent :comments="comment" />
+                    </div>
                 </div>
             </div>
         </transition>

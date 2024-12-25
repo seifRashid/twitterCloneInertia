@@ -14,7 +14,7 @@ class DashboardController extends Controller
         if (request()->has('search')) {
             $ideas = Ideas::where( 'content', 'like', '%' . request()->get('search','') . '%');
         }
-
+        
         return Inertia::render('Chat/VHome', ['posts' => $ideas
                 ->paginate(5)]);
     }

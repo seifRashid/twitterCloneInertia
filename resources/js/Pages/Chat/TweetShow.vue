@@ -15,7 +15,8 @@ defineProps({
     flash: Object,
     // form errors
     errors: Object,
-    editing: Boolean
+    editing: Boolean,
+    comments: Object
 });
 
 // if(this.flash.success === true){
@@ -52,8 +53,7 @@ defineProps({
 
                         <div class="flex flex-col gap-4 pb-3">
                             <!-- Posts  -->
-                            <VPost :post="posts" :showEditing="editing" />
-                             <!-- {{ posts }} -->
+                            <VPost :post="posts" :comments="comments" :showEditing="editing" />
                         </div>
                     </div>
                 </div>

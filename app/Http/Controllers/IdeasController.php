@@ -46,8 +46,10 @@ class IdeasController extends Controller
     public function show($ideas)
     {
         //
+        // dd($ideas->comments);
         $ideas = Ideas::where('id', $ideas)->firstOrFail();
-        return Inertia::render('Chat/TweetShow', ['posts' => $ideas]);
+        $comments = $ideas->comments;
+        return Inertia::render('Chat/TweetShow', ['posts' => $ideas, 'comments'=>$comments ]);
 
     }
 
@@ -68,10 +70,10 @@ class IdeasController extends Controller
     public function update(Request $request,$ideas)
     {
         //
+        dd($ideas);
         $validated = $request->validate([
             'content' => 'required|string|max:255|min:3',
             ]);
-            // dd($validated);
             $ideas = Ideas::where('id', $ideas)->firstOrFail();
             $ideas->update($validated);
             return redirect()->route('tweet.show', $ideas->id)->with('success', 'Post updated successfully🚀');

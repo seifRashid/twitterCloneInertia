@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\IdeasController;
 use App\Http\Controllers\ProfileController;
@@ -35,6 +36,11 @@ Route::resource('tweet', IdeasController::class)
     ->names(['store' => 'tweet.store', 'destroy' => 'tweet.destroy', 'show' => 'tweet.show', 'edit' => 'tweet.edit', 'update'=>'tweet.update'])
     ->middleware(['auth', 'verified']);
 
+//Comment routes
+Route::resource('comment', CommentController::class)
+    ->only(['store'])
+    ->names(['store' => 'tweet.comment.store'])
+    ->middleware(['auth', 'verified']);
 // Route::delete('/tweet/{id}', [IdeasController::class, 'destroy'])->name('tweet.destroy');
 
 //route view for terms page
