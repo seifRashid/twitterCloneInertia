@@ -1,22 +1,31 @@
 <script setup>
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+dayjs.extend(relativeTime);
 
 const props = defineProps({
     comments: Array,
-
 });
 
 </script>
 <template>
-    <hr>
-    <div class="flex justify-start items-center gap-2">
-        <div
-            class="size-[35px] rounded-full bg-green-400 text-2xl items-center"
-        ></div>
-        <div class="font-bold text-slate-800">{{ props.comments.id }}</div>
+    <hr />
+    <div class="flex justify-between items-center gap-2">
+        <div class="flex justify-start items-center gap-2">
+            <div
+                class="size-[35px] rounded-full bg-green-400 text-2xl items-center"
+            ></div>
+            <div class="font-bold text-slate-800">{{ props.comments.user_id }}</div>
+            {{ comments }}
+        </div>
+        <div class="text-sm text-slate-800">
+            {{ dayjs(props.comments.created_at).fromNow() }}
+        </div>
     </div>
     <p class="text-sm text-slate-800">
         {{ props.comments.comment }}
     </p>
+    <!-- {{ comments }} -->
     <div class="flex gap-2 items-center justify-between w-full my-2">
         <!-- Like icon -->
         <div
@@ -41,10 +50,7 @@ const props = defineProps({
         </div>
         <!-- Comment icon -->
         <!-- @click="commentShow = !commentShow" -->
-        <div
-            class="cursor-pointer"
-            title="Comment this post 💌"
-        >
+        <div class="cursor-pointer" title="Comment this post 💌">
             <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"

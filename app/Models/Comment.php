@@ -9,6 +9,7 @@ class Comment extends Model
     protected $fillable = [
         'comment',
         'ideas_id',
+        'user_id',
     ];
 
     //define relationship, comment belongs to ideas model

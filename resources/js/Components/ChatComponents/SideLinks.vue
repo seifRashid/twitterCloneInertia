@@ -9,6 +9,9 @@ import { Link } from '@inertiajs/vue3';
             <Link :href="route('home')"> Home </Link>
         </div>
         <div class="hover:text-slate-600">
+            <Link :href="route('profilepage.index')"> Profile </Link>
+        </div>
+        <div class="hover:text-slate-600">
             <Link :href="route('home')"> Explore </Link>
         </div>
         <div class="hover:text-slate-600">

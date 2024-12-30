@@ -4,6 +4,7 @@ use App\Http\Controllers\CommentController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\IdeasController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ProfilePageController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -47,5 +48,12 @@ Route::resource('comment', CommentController::class)
 Route::get('/terms', function () {
     return Inertia::render('Chat/VTerms');
 })->name('terms');
+
+
+//Route for profile page
+Route::resource('profilepage', ProfilePageController::class)
+    ->only(['index'])
+    ->names(['index'=>'profilepage.index'])
+    ->middleware(['auth', 'verified']);
 
 require __DIR__ . '/auth.php';

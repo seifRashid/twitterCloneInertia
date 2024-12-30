@@ -6,6 +6,8 @@ use App\Models\Ideas;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
+use function Laravel\Prompts\alert;
+
 class IdeasController extends Controller
 {
     /**
@@ -34,6 +36,7 @@ class IdeasController extends Controller
             'content' => 'required|string|max:255|min:3',
         ]);
 
+        $validated['user_id'] = auth()->id();
         Ideas::create($validated);
         // dd('Hello from controller');
         return redirect()->route('home')->with('success', 'Post created successfully🚀');
@@ -45,9 +48,7 @@ class IdeasController extends Controller
      */
     public function show($ideas)
     {
-        //
-        // dd($ideas->comments);
-        $ideas = Ideas::where('id', $ideas)->firstOrFail();
+        $ideas = Ideas::with('user:id,name')->where('id', $ideas)->firstOrFail();
         $comments = $ideas->comments;
         return Inertia::render('Chat/TweetShow', ['posts' => $ideas, 'comments'=>$comments ]);
 
@@ -58,9 +59,10 @@ class IdeasController extends Controller
      */
     public function edit($ideas)
     {
-        //
-        // $editing = true;
         $ideas = Ideas::where('id', $ideas)->firstOrFail();
+        if(auth()->id() !== $ideas->user_id){
+            abort(403);
+        }
         return Inertia::render('Chat/TweetShow', ['posts' => $ideas,'editing'=>true]);
     }
 
@@ -86,15 +88,10 @@ class IdeasController extends Controller
     {
 
         $ideas = Ideas::where('id', $ideas)->firstOrFail();
-        // dd($ideas);
+        if(auth()->id() !== $ideas->user_id){
+            abort(403);
+        }
         $ideas->delete();
-        //
-        // $ideas->delete();
-
-        // $ondoa = Ideas::find($ideas)->pluck('id');
-        // dd($ondoa);
-        // Ideas::destroy(7);
         return redirect()->route('home')->with('success', 'Post deleted successfully🚀');
-        // // return redirect(route('home'));
     }
 }

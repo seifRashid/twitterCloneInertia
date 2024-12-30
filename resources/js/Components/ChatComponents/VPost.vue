@@ -1,6 +1,6 @@
 <script setup>
-import { reactive, ref } from "vue";
-import { Link, router, useForm } from "@inertiajs/vue3";
+import { ref } from "vue";
+import { useForm } from "@inertiajs/vue3";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import DropdownLink from "../DropdownLink.vue";
@@ -12,7 +12,7 @@ const props = defineProps({
     post: [Array, Object],
     showEditing: Boolean,
     errors: Object,
-    comments: Object,
+    comments: Array,
 });
 
 const form = useForm({
@@ -35,7 +35,7 @@ const commentShow = ref(false);
                 <div
                     class="size-[45px] rounded-full bg-green-400 text-2xl items-center"
                 ></div>
-                <div class="font-bold text-slate-800">{{ post.id }}</div>
+                <div class="font-bold text-slate-800">{{ post.user.name }}</div>
             </div>
             <div class="flex justify-between gap-3 items-center">
                 <div class="text-sm text-slate-800">
@@ -88,7 +88,7 @@ const commentShow = ref(false);
                                     <DropdownLink
                                         class="text-blue-800 text-start"
                                         as="button"
-                                        :href="route('tweet.show', post.id)"
+                                        :href="route('tweet.show', post.id, { preserveScroll: true })"
                                         method="get"
                                     >
                                         Show
@@ -244,7 +244,7 @@ const commentShow = ref(false);
                 <!-- <CommentSection/> -->
                 <form
                     @submit.prevent="
-                        form.post(route('tweet.comment.store')), form.reset()
+                        form.post(route('tweet.comment.store')), form.reset(), { preserveScroll: true }
                     "
                 >
                     <div class="flex flex-col gap-2">
@@ -262,7 +262,9 @@ const commentShow = ref(false);
                         Comment
                     </button>
                 </form>
-                <div class="w-full flex flex-col gap-2 p-4">
+                <div class="w-full flex flex-col">
+                    <TransitionGroup name="list" tag="ul">
+
                     <div
                         v-if="props.comments.length === 0"
                         class="text-center text-gray-500 font-bold py-1 my-2 px-4 rounded"
@@ -273,10 +275,12 @@ const commentShow = ref(false);
                         v-else
                         v-for="comment in props.comments"
                         :key="comment.id"
-                        class="flex flex-col gap-2 p-4 rounded-md"
                     >
-                        <CommentContent :comments="comment" />
+                    <div class="flex flex-col gap-2 p-4 rounded-md" v-if="comment.ideas_id === post.id" >
+                             <CommentContent :comments="comment" />
+                         </div>
                     </div>
+                    </TransitionGroup>
                 </div>
             </div>
         </transition>
@@ -299,5 +303,14 @@ const commentShow = ref(false);
 .fade-slide-leave-from {
     opacity: 1;
     transform: translateY(0);
+}
+.list-enter-active,
+.list-leave-active {
+    transition: all 0.5s ease;
+}
+.list-enter-from,
+.list-leave-to {
+    opacity: 0;
+    transform: translateX(30px);
 }
 </style>
