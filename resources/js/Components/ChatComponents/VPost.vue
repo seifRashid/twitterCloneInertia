@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from "vue";
+import { Link } from "@inertiajs/vue3";
 import { useForm } from "@inertiajs/vue3";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -21,6 +22,8 @@ const form = useForm({
     comment: null,
 });
 
+let userId = props.post.id
+
 const edit = ref(false);
 
 const showSetting = ref(false);
@@ -35,7 +38,11 @@ const commentShow = ref(false);
                 <div
                     class="size-[45px] rounded-full bg-green-400 text-2xl items-center"
                 ></div>
-                <div class="font-bold text-slate-800">{{ post.user.name }}</div>
+                <Link :href="route('profilepage.index', userId)">
+                    <div class="font-bold text-slate-800 cursor-pointer">
+                        {{ post.user.name }}
+                    </div>
+                </Link>
             </div>
             <div class="flex justify-between gap-3 items-center">
                 <div class="text-sm text-slate-800">
@@ -88,7 +95,11 @@ const commentShow = ref(false);
                                     <DropdownLink
                                         class="text-blue-800 text-start"
                                         as="button"
-                                        :href="route('tweet.show', post.id, { preserveScroll: true })"
+                                        :href="
+                                            route('tweet.show', post.id, {
+                                                preserveScroll: true,
+                                            })
+                                        "
                                         method="get"
                                     >
                                         Show
@@ -244,7 +255,9 @@ const commentShow = ref(false);
                 <!-- <CommentSection/> -->
                 <form
                     @submit.prevent="
-                        form.post(route('tweet.comment.store')), form.reset(), { preserveScroll: true }
+                        form.post(route('tweet.comment.store')),
+                            form.reset(),
+                            { preserveScroll: true }
                     "
                 >
                     <div class="flex flex-col gap-2">
@@ -264,22 +277,24 @@ const commentShow = ref(false);
                 </form>
                 <div class="w-full flex flex-col">
                     <TransitionGroup name="list" tag="ul">
-
-                    <div
-                        v-if="props.comments.length === 0"
-                        class="text-center text-gray-500 font-bold py-1 my-2 px-4 rounded"
-                    >
-                        No comments yet
-                    </div>
-                    <div
-                        v-else
-                        v-for="comment in props.comments"
-                        :key="comment.id"
-                    >
-                    <div class="flex flex-col gap-2 p-4 rounded-md" v-if="comment.ideas_id === post.id" >
-                             <CommentContent :comments="comment" />
-                         </div>
-                    </div>
+                        <div
+                            v-if="props.comments.length === 0"
+                            class="text-center text-gray-500 font-bold py-1 my-2 px-4 rounded"
+                        >
+                            No comments yet
+                        </div>
+                        <div
+                            v-else
+                            v-for="comment in props.comments"
+                            :key="comment.id"
+                        >
+                            <div
+                                class="flex flex-col gap-2 p-4 rounded-md"
+                                v-if="comment.ideas_id === post.id"
+                            >
+                                <CommentContent :comments="comment" />
+                            </div>
+                        </div>
                     </TransitionGroup>
                 </div>
             </div>
