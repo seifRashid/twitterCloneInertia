@@ -51,7 +51,7 @@ Route::get('/terms', function () {
 
 
 //Route for profile page
-Route::resource('profilepage', ProfilePageController::class)
+Route::resource('profilepages', ProfilePageController::class)
     ->only(['index'])
     ->names(['index'=>'profilepage.index'])
     ->middleware(['auth', 'verified']);

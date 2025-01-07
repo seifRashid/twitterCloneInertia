@@ -5,11 +5,28 @@ import SideLinks from "@/Components/ChatComponents/SideLinks.vue";
 import VPagination from "@/Components/ChatComponents/VPagination.vue";
 import VPost from "@/Components/ChatComponents/VPost.vue";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import { Head, Link } from "@inertiajs/vue3";
+import { Head, Link, useForm, usePage } from "@inertiajs/vue3";
+import { ref } from "vue";
 
-defineProps({
-    profile_details: Array,
+const form = useForm({
+    bio: "",
+    profileImage: "",
 });
+
+const previewImage = ref(null);
+
+const user = usePage().props.auth.user;
+const editProfile = ref(false);
+
+function uploadProfilePicture(event) {
+    const file = event.target.files[0];
+    if (file) {
+        form.profile_picture = file;
+
+        // Create a preview URL
+        previewImage.value = URL.createObjectURL(file);
+    }
+}
 </script>
 
 <template>
@@ -22,37 +39,146 @@ defineProps({
                 <SideLinks />
                 <div class="w-2/4">
                     <div class="flex flex-col gap-4">
-                        <!-- <div
-                            v-show="flash.success"
-                            class="flex justify-between bg-green-400 text-green-900 text-lg border border-green-600 p-3 w-full rounded-md"
-                        >
-                            <div class="font-bold">
-                                {{ flash.success }}
-                            </div>
-                            <p
-                                class="ml-5 cursor-pointer font-bold"
-                                @click="flash.success = false"
-                            >
-                                X
-                            </p>
-                        </div> -->
-
                         <div
                             class="flex flex-col gap-2 pb-3 justify-start items-center"
                         >
                             <!-- Profile content section  -->
                             <!-- Create a profile section for the user -->
                             <div
-                                class="size-[45px] rounded-full bg-green-400 text-2xl flex justify-center items-center"
+
                             >
-                                {{ profile_details.id }}
+                                <img
+                                    v-if="previewImage"
+                                    :src="previewImage"
+                                    alt="Profile Picture Preview"
+                                    class="size-32 rounded-full object-cover text-2xl flex justify-center items-center"
+                                />
+                                <!-- <img
+                                    v-else-if="user.profile_picture"
+                                    :src="`/storage/${user.profile_picture}`"
+                                    alt="Current Profile Picture"
+                                    class="w-24 h-24 rounded-full mb-4"
+                                /> -->
                             </div>
                             <div class="text-lg font-bold">
-                                {{ profile_details.name }}
+                                {{ user.name }}
                             </div>
                             <div class="text-lg font-bold">
-                                {{ profile_details.email }}
+                                {{ user.email }}
                             </div>
+                        </div>
+                        <div class="w-full">
+                            <div
+                                @click="editProfile = !editProfile"
+                                class="flex gap-2 items-center justify-center cursor-pointer bg-gray-200 hover:bg-gray-300 hover:border hover:border-gray-400 w-[132px] px-2 py-1 rounded-md"
+                            >
+                                <p class="text-sm font-semibold">
+                                    Edit Profile
+                                </p>
+                                <svg
+                                    class="size-6"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <g
+                                        id="SVGRepo_bgCarrier"
+                                        stroke-width="0"
+                                    ></g>
+                                    <g
+                                        id="SVGRepo_tracerCarrier"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                    ></g>
+                                    <g id="SVGRepo_iconCarrier">
+                                        <path
+                                            d="M13 21H21"
+                                            stroke="#323232"
+                                            stroke-width="2"
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                        ></path>
+                                        <path
+                                            d="M20.0651 7.39423L7.09967 20.4114C6.72438 20.7882 6.21446 21 5.68265 21H4.00383C3.44943 21 3 20.5466 3 19.9922V18.2987C3 17.7696 3.20962 17.2621 3.58297 16.8873L16.5517 3.86681C19.5632 1.34721 22.5747 4.87462 20.0651 7.39423Z"
+                                            stroke="#323232"
+                                            stroke-width="2"
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                        ></path>
+                                        <path
+                                            d="M15.3096 5.30981L18.7273 8.72755"
+                                            stroke="#323232"
+                                            stroke-width="2"
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                        ></path>
+                                        <path
+                                            opacity="0.1"
+                                            d="M18.556 8.90942L7.09967 20.4114C6.72438 20.7882 6.21446 21 5.68265 21H4.00383C3.44943 21 3 20.5466 3 19.9922V18.2987C3 17.7696 3.20962 17.2621 3.58297 16.8873L15.0647 5.35974C15.0742 5.4062 15.0969 5.45049 15.1329 5.48653L18.5506 8.90426C18.5524 8.90601 18.5542 8.90773 18.556 8.90942Z"
+                                            fill="#323232"
+                                        ></path>
+                                    </g>
+                                </svg>
+                            </div>
+                        </div>
+                        <div v-if="editProfile" class="flex p-4 bg-gray-200">
+                            <div class="flex flex-col gap-1 w-full">
+                                <p class="font-bold mb-4">
+                                    Edit Bio and profile picture
+                                </p>
+                                <form
+                                    @submit.prevent="
+                                        form.post(route('tweet.comment.store')),
+                                            form.reset(),
+                                            { preserveScroll: true },
+                                            (editProfile = false),
+                                            (previewImage.value = null)
+                                    "
+                                    class="w-full space-y-2"
+                                >
+                                    <div
+                                        class="flex items-start justify-between w-full"
+                                    >
+                                        <label
+                                            for="profileImage"
+                                            class="font-semibold text-sm w-[120px]"
+                                            >Profile Photo:</label
+                                        >
+                                        <input
+                                            type="file"
+                                            id="profileImage"
+                                            @change="uploadProfilePicture"
+                                            class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100"
+                                        />
+                                    </div>
+                                    <div
+                                        class="flex items-start justify-between w-full"
+                                    >
+                                        <label
+                                            for="bio"
+                                            class="font-semibold text-sm w-[120px]"
+                                            >Bio:</label
+                                        >
+                                        <textarea
+                                            v-model="bio"
+                                            class="w-full h-20 p-2 border border-gray-300 rounded-md"
+                                            placeholder="Tell us about yourself"
+                                        />
+                                    </div>
+                                    <!-- submit button -->
+                                    <button
+                                        class="py-1 px-2 bg-green-300 font-semibold rounded-md"
+                                        type="submit"
+                                    >
+                                        Submit
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                        <div v-else class="flex p-4 bg-gray-200">
+                            <p class="font-semibold pr-1">Bio:</p>
+                            <p v-if="bio">{{ bio }}</p>
+                            <p v-else>Bio is empty😁</p>
                         </div>
                     </div>
                 </div>

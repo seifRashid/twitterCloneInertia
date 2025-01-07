@@ -10,10 +10,11 @@ class ProfilePageController extends Controller
 {
     //
 
-    public function index(User $userId){
+    public function index(){
         // $userData = $request;
 
-        dd($userId->all());
-        return Inertia::render('Chat/VProfile', ['profile_details'=>$userData]);
+        // $user = auth()->user();
+        // dd($user);
+        return Inertia::render('Chat/VProfile');
     }
 }
