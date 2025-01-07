@@ -8,20 +8,21 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head, Link, useForm, usePage } from "@inertiajs/vue3";
 import { ref } from "vue";
 
+const user = usePage().props.auth.user;
 const form = useForm({
+    user_id: user.id,
     bio: "",
     profileImage: "",
 });
-
+console.log(user.id);
 const previewImage = ref(null);
-
-const user = usePage().props.auth.user;
+const showProfileOnScreen = ref(false);
 const editProfile = ref(false);
 
 function uploadProfilePicture(event) {
     const file = event.target.files[0];
     if (file) {
-        form.profile_picture = file;
+        form.profileImage = file;
 
         // Create a preview URL
         previewImage.value = URL.createObjectURL(file);
@@ -34,8 +35,22 @@ function uploadProfilePicture(event) {
 
     <AuthenticatedLayout>
         <div class="w-[80%] mx-auto">
-            <div class="flex gap-2 items-start justify-center w-full pt-4">
+            <div
+                class="relative flex gap-2 items-start justify-center w-full pt-4"
+            >
                 <!--  Side Links  -->
+                <div
+                    v-show="showProfileOnScreen"
+                    class="absolute flex flex-col items-center justify-center left-0 top-0 w-full h-full"
+                >
+                    <img
+                        v-if="previewImage"
+                        :src="previewImage"
+                        alt="Profile Picture Preview"
+                        class="w-[400px] h-auto object-cover rounded-md text-2xl flex justify-center items-center"
+                    />
+                    <div @click="showProfileOnScreen = false" class="cursor-pointer bg-green-900 px-2 text-sm font-semibold text-green-100 rounded-md my-2" title="click to get back to profile" >Out</div>
+                </div>
                 <SideLinks />
                 <div class="w-2/4">
                     <div class="flex flex-col gap-4">
@@ -44,24 +59,33 @@ function uploadProfilePicture(event) {
                         >
                             <!-- Profile content section  -->
                             <!-- Create a profile section for the user -->
-                            <div
-
-                            >
+                            <div>
+                                <!-- Show image on fly after file has been selected -->
                                 <img
+                                    @click="showProfileOnScreen = true"
                                     v-if="previewImage"
                                     :src="previewImage"
                                     alt="Profile Picture Preview"
-                                    class="size-32 rounded-full object-cover text-2xl flex justify-center items-center"
+                                    class="cursor-pointer size-32 rounded-full object-cover text-2xl flex justify-center items-center"
                                 />
-                                <!-- <img
+                                <!-- Show image database after file has been uploaded -->
+                                <img
                                     v-else-if="user.profile_picture"
                                     :src="`/storage/${user.profile_picture}`"
                                     alt="Current Profile Picture"
                                     class="w-24 h-24 rounded-full mb-4"
-                                /> -->
+                                />
+                                <!-- Show an empty circle with the user name inside it if no image is available -->
+                                <div
+                                    v-else
+                                    class="size-32 rounded-full object-cover border border-green-600 text-2xl flex justify-center items-center"
+                                >
+                                    {{ user.id }}
+                                </div>
                             </div>
                             <div class="text-lg font-bold">
                                 {{ user.name }}
+                                <!-- {{ usePage().auth.user.id }} -->
                             </div>
                             <div class="text-lg font-bold">
                                 {{ user.email }}
@@ -128,9 +152,8 @@ function uploadProfilePicture(event) {
                                 </p>
                                 <form
                                     @submit.prevent="
-                                        form.post(route('tweet.comment.store')),
+                                        form.patch(route('profile.update')),
                                             form.reset(),
-                                            { preserveScroll: true },
                                             (editProfile = false),
                                             (previewImage.value = null)
                                     "
@@ -150,6 +173,13 @@ function uploadProfilePicture(event) {
                                             @change="uploadProfilePicture"
                                             class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100"
                                         />
+                                        <!-- form errors -->
+                                        <!-- <div
+                                         v-if="form.errors.has('profileImage')"
+                                         class="text-red-500 text-sm"
+                                         >
+                                         {{ form.errors.get('profileImage') }}
+                                        </div> -->
                                     </div>
                                     <div
                                         class="flex items-start justify-between w-full"
@@ -177,8 +207,8 @@ function uploadProfilePicture(event) {
                         </div>
                         <div v-else class="flex p-4 bg-gray-200">
                             <p class="font-semibold pr-1">Bio:</p>
-                            <p v-if="bio">{{ bio }}</p>
-                            <p v-else>Bio is empty😁</p>
+                            <p v-if="user.bio">{{ user.bio }}</p>
+                            <p v-else>Bio is empty😁{{ user.bio }}</p>
                         </div>
                     </div>
                 </div>
