@@ -2,9 +2,12 @@
 
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\FollowController;
 use App\Http\Controllers\IdeasController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ProfileDataController;
 use App\Http\Controllers\ProfilePageController;
+use App\Models\ProfileData;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -51,9 +54,14 @@ Route::get('/terms', function () {
 
 
 //Route for profile page
-Route::resource('profilepages', ProfilePageController::class)
-    ->only(['index'])
-    ->names(['index'=>'profilepage.index'])
+Route::resource('profile_data', ProfileDataController::class)
+    ->only(['index', 'update'])
+    ->names(['index'=>'profilepage.index', 'update'=>'profilePic.update'])
     ->middleware(['auth', 'verified']);
+
+//Follow and unfollow routes
+Route::post('users/{id}/follow', [FollowController::class, 'follow'])->name('user.follow')->middleware('auth');
+Route::post('users/{id}/unfollow', [FollowController::class, 'unfollow'])->name('user.unfollow')->middleware('auth');
+
 
 require __DIR__ . '/auth.php';

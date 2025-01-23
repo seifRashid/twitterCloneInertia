@@ -5,12 +5,13 @@ import SideLinks from "@/Components/ChatComponents/SideLinks.vue";
 import VPagination from "@/Components/ChatComponents/VPagination.vue";
 import VPost from "@/Components/ChatComponents/VPost.vue";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import { Head, Link, useForm, usePage } from "@inertiajs/vue3";
+import { Head, Link, router, useForm, usePage } from "@inertiajs/vue3";
 import { ref } from "vue";
 
 const user = usePage().props.auth.user;
 const form = useForm({
-    user_id: user.id,
+    // user_id: user.id,
+    profileData: user.id,
     bio: "",
     profileImage: "",
 });
@@ -28,6 +29,12 @@ function uploadProfilePicture(event) {
         previewImage.value = URL.createObjectURL(file);
     }
 }
+
+// function submitForm() {
+//     router.patch(route("profilePic.update"), form),
+//     alert("Hello submit")
+//     form.reset();
+// }
 </script>
 
 <template>
@@ -49,7 +56,13 @@ function uploadProfilePicture(event) {
                         alt="Profile Picture Preview"
                         class="w-[400px] h-auto object-cover rounded-md text-2xl flex justify-center items-center"
                     />
-                    <div @click="showProfileOnScreen = false" class="cursor-pointer bg-green-900 px-2 text-sm font-semibold text-green-100 rounded-md my-2" title="click to get back to profile" >Out</div>
+                    <div
+                        @click="showProfileOnScreen = false"
+                        class="cursor-pointer bg-green-900 px-2 text-sm font-semibold text-green-100 rounded-md my-2"
+                        title="click to get back to profile"
+                    >
+                        Out
+                    </div>
                 </div>
                 <SideLinks />
                 <div class="w-2/4">
@@ -151,12 +164,8 @@ function uploadProfilePicture(event) {
                                     Edit Bio and profile picture
                                 </p>
                                 <form
-                                    @submit.prevent="
-                                        form.patch(route('profile.update')),
-                                            form.reset(),
-                                            (editProfile = false),
-                                            (previewImage.value = null)
-                                    "
+                                    @submit.prevent="form.patch(route('profilePic.update'))"
+                                    enctype="multipart/form-data"
                                     class="w-full space-y-2"
                                 >
                                     <div
@@ -190,7 +199,7 @@ function uploadProfilePicture(event) {
                                             >Bio:</label
                                         >
                                         <textarea
-                                            v-model="bio"
+                                            v-model="form.bio"
                                             class="w-full h-20 p-2 border border-gray-300 rounded-md"
                                             placeholder="Tell us about yourself"
                                         />
@@ -199,6 +208,7 @@ function uploadProfilePicture(event) {
                                     <button
                                         class="py-1 px-2 bg-green-300 font-semibold rounded-md"
                                         type="submit"
+                                        @click="console.log('hello man')"
                                     >
                                         Submit
                                     </button>

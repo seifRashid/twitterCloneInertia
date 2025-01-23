@@ -22,7 +22,7 @@ const form = useForm({
     comment: null,
 });
 
-let userId = props.post.id
+let userId = props.post.id;
 
 const edit = ref(false);
 
@@ -38,16 +38,28 @@ const commentShow = ref(false);
                 <div
                     class="size-[45px] rounded-full bg-green-400 text-2xl items-center"
                 ></div>
-                <Link :href="route('profilepage.index', userId)">
-                    <div class="font-bold text-slate-800 cursor-pointer">
-                        {{ post.user.name }}
+                <div class="flex items-baseline justify-between gap-2">
+                    <Link :href="route('profilepage.index', userId)">
+                        <div class="font-bold text-slate-800 cursor-pointer">
+                            {{ post.user.name }}
+                        </div>
+                    </Link>
+                    <div class="text-sm text-slate-800">
+                        {{ dayjs(post.created_at).fromNow() }}
                     </div>
-                </Link>
+                </div>
             </div>
             <div class="flex justify-between gap-3 items-center">
-                <div class="text-sm text-slate-800">
-                    {{ dayjs(post.created_at).fromNow() }}
-                </div>
+                <form action="" method="post">
+                    <DropdownLink
+                        class="text-sm text-slate-800 bg-white px-2 rounded-2xl border border-slate-400 shadow-sm hover:bg-white hover:shadow-md cursor-pointer"
+                        as="button"
+                        :href="route('user.follow', post.id)"
+                        method="post"
+                    >
+                        follow
+                    </DropdownLink>
+                </form>
                 <!-- Post settings -->
                 <div class="flex flex-col relative">
                     <svg
