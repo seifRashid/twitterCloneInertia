@@ -16,6 +16,10 @@ const props = defineProps({
     comments: Array,
 });
 
+const followForm = useForm({
+    ideas_id: props.post.id,
+});
+
 const form = useForm({
     ideas_id: props.post.id,
     content: null,
@@ -50,15 +54,28 @@ const commentShow = ref(false);
                 </div>
             </div>
             <div class="flex justify-between gap-3 items-center">
-                <form action="" method="post">
+                <!-- <form action="" method="post">
                     <DropdownLink
                         class="text-sm text-slate-800 bg-white px-2 rounded-2xl border border-slate-400 shadow-sm hover:bg-white hover:shadow-md cursor-pointer"
                         as="button"
-                        :href="route('user.follow', post.id)"
+                        :href="route('user.follow', props.post.id)"
                         method="post"
                     >
                         follow
                     </DropdownLink>
+                </form> -->
+                <form
+                    @submit.prevent="
+                        form.post(route('user.follow', props.post.id)),
+                            { preserveScroll: true }
+                    "
+                >
+                    <button
+                        type="submit"
+                        class="text-sm text-slate-800 bg-white px-2 rounded-2xl border border-slate-400 shadow-sm hover:bg-white hover:shadow-md cursor-pointer"
+                    >
+                        Follow
+                    </button>
                 </form>
                 <!-- Post settings -->
                 <div class="flex flex-col relative">

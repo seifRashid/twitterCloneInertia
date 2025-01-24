@@ -2,23 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\User;
 
 class FollowController extends Controller
 {
     //
-    public function follow(){
-        dd('hello Rashid');
-        // $user = auth()->user();
-        // $user->follow()->toggle(auth()->id());
-        // return redirect()->back();
-        }
-        
-    public function unfollow(){
+    public function follow(User $user)
+    {
+        dd($user);
+        // $follower = auth()->user();
+        // // dd('hello');
+        // $follower->followings()->attach(1);
+        // return redirect()->back()->with('success', 'User followed successfuly');
+    }
+
+    public function unfollow()
+    {
         $user = auth()->user();
         $user->unfollow()->toggle(auth()->id());
         return redirect()->back();
     }
-
 
 }
